@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, forkJoin, switchMap, map , catchError, throwError } from 'rxjs';
+import {
+  Observable,
+  forkJoin,
+  map,
+  switchMap
+} from 'rxjs';
 
 import {
   Pokemon,
@@ -13,41 +18,34 @@ import {
 })
 export class PokemonService {
 
-  private apiUrl =
-    'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0';
+  private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
 
   constructor(
     private http: HttpClient
   ) { }
 
-  getPokemons(): Observable<Pokemon[]> {
+  getPokemons(offset: number): Observable<Pokemon[]> {
 
-  return this.http
-    .get<PokemonListResponse>(this.apiUrl)
-    .pipe(
+    return this.http
+      .get<PokemonListResponse>(
+        `${this.apiUrl}?limit=20&offset=${offset}`
+      )
+      .pipe(
 
-      switchMap(response => {
+        switchMap(response => {
 
-        const requests = response.results.map(
-          pokemon => this.http.get<Pokemon>(pokemon.url)
-        );
+          const requests = response.results.map(
+            pokemon => this.http.get<Pokemon>(pokemon.url)
+          );
 
-        return forkJoin(requests);
+          return forkJoin(requests);
 
-      }),
+        }),
 
-      map(pokemons =>
-        pokemons.sort((a, b) => a.id - b.id)
-      ),
+        map(pokemons =>
+          pokemons.sort((a, b) => a.id - b.id)
+        )
 
-      catchError(error => {
-
-        console.error('Error al obtener los Pokémon:', error);
-
-        return throwError(() => error);
-
-      })
-
-    );
-}
+      );
+  }
 }
