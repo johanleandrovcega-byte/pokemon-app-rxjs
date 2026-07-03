@@ -1,0 +1,64 @@
+<div *ngIf="loading" class="loading">
+  <div class="spinner"></div>
+  <h2>Cargando Pokédex...</h2>
+</div>
+
+<div *ngIf="error" class="error">
+  {{ error }}
+</div>
+
+<div class="container">
+
+  <div
+    class="card"
+    *ngFor="let pokemon of pokemons">
+
+    <img
+      [src]="pokemon.sprites.front_default"
+      [alt]="pokemon.name">
+
+    <h2>
+      {{ pokemon.name | titlecase }}
+    </h2>
+
+    <div class="info">
+
+      <p>
+        <span>ID</span>
+        #{{ pokemon.id }}
+      </p>
+
+      <p>
+        <span>Altura</span>
+        {{ pokemon.height }}
+      </p>
+
+      <p>
+        <span>Peso</span>
+        {{ pokemon.weight }}
+      </p>
+
+      <p>
+        <span>Experiencia</span>
+        {{ pokemon.base_experience }}
+      </p>
+
+      <p>
+        <span>Tipos</span>
+
+        <ng-container
+          *ngFor="let type of pokemon.types; let last = last">
+
+          {{ type.type.name }}
+
+          <span *ngIf="!last">, </span>
+
+        </ng-container>
+
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
